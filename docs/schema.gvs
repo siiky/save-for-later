@@ -1,0 +1,26 @@
+; vim: ft=scheme
+(digraph
+ schema
+ (settings)
+
+ (nodes
+  Entry
+  "Node"
+
+  ID
+  CID
+  Type
+  Name
+  Bool
+  URL
+  )
+
+ (-> Entry CID (label hasCID))
+ (-> Entry URL (label HasURL))
+ (-> Entry Name (label isNamed))
+ (-> Entry Type (label ofType))
+ (-> Entry Bool (label consumed))
+
+ (-> "Node" CID (label Pinned))
+ (-> "Node" ID (label identifiedBy))
+ )
