@@ -1,0 +1,21 @@
+#+TITLE: save-for-later
+#+AUTHOR: siiky
+#+LANGUAGE: en
+
+Or =sfl= for short.
+
+The goal of this project is, other than taking the chance to learn a few new
+things, to create a program to keep a personal catalogue of things to "consume"
+(be they videos, books, podcasts, &c) distributed between some trusted nodes.
+
+Often it happens to me that I want to watch/read something, but not always on
+the device I have the thing on; or sometimes I don't have internet but I don't
+have the thing downloaded either. So what ends up happening is that I either
+redownload the thing (if I have internet); or worse, don't watch/read the thing!
+
+To solve this, the plan is to store things that I want to watch/read later
+somewhere online "at all times", and keep a distributed DB between the nodes to
+save the actual catalogue. When the time comes that I want to watch/read the
+thing, as long as it's either pinned on the device I'm on, or I have internet
+and at least one of my other nodes up, I can! The storage will be [[https://ipfs.io][IPFS]] and the
+distributed DB will be [[https://github.com/rqlite/rqlite][rqlite]].
