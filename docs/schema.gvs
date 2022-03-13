@@ -1,26 +1,47 @@
 ; vim: ft=scheme
 (digraph
- schema
- (settings)
+  schema
+  (settings (graph (layout sfdp) (K "0.1")))
 
- (nodes
-  Entry
-  "Node"
+  (settings (node (shape "box")))
+  (nodes
+    Entry
+    "Node"
+    Waitlist)
 
-  ID
-  CID
-  Type
-  Name
-  Bool
-  URL
+  (settings (node (shape "oval")))
+  (nodes
+    ID
+    CID
+    Type
+    Name
+    Bool
+    URL)
+
+  ;;;
+  ;;; Basic functionality
+  ;;;
+
+  (subgraph
+    entry_sg
+    (-> Entry CID (label hasCID))
+    (-> Entry Name (label isNamed))
+    (-> Entry Type (label ofType))
+    (-> Entry URL (label HasURL))
+    (-> Entry Bool (label consumed)))
+
+  (subgraph
+    node_sg
+    (-> "Node" CID (label Pinned))
+    (-> "Node" ID (label identifiedBy)))
+
+  ;;;
+  ;;; Experimental
+  ;;;
+
+  (subgraph
+    waitlist_sg
+    (-> Waitlist URL (label hasURL))
+    (-> Waitlist Name (label isNamed))
+    (-> Waitlist Type (label ofType)))
   )
-
- (-> Entry CID (label hasCID))
- (-> Entry URL (label HasURL))
- (-> Entry Name (label isNamed))
- (-> Entry Type (label ofType))
- (-> Entry Bool (label consumed))
-
- (-> "Node" CID (label Pinned))
- (-> "Node" ID (label identifiedBy))
- )

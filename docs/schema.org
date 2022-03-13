@@ -28,24 +28,29 @@ corresponds to the various nodes running and participating in the network.
 
 * Multiplicities
 
-These are the relations of the entries:
+** =Entry=
 
-+ =ofType : Type <- Entry= :: A surjective function, but not injective. Represents the type of the entry; that is, whether it is a video, a document, podcast, &c.
-+ =isNamed : Name <- Entry= :: A surjective function, but not injective. Represents the name of the entry. This could be the title of the video, book, podcast episode, &c.
-+ =consumed : Bool <- Entry= :: A surjective function, but not injective. Represents whether the entry has been consumed already or not.
-+ =HasURL : URL <- Entry= :: An injective relation. The URL of the entry, e.g. the "official" source.
 + =hasCID : CID <- Entry= :: A bijection. The CID of the entry on IPFS.
++ =isNamed : Name <- Entry= :: A surjective function, but not injective. Represents the name of the entry. This could be the title of the video, book, podcast episode, &c.
++ =ofType : Type <- Entry= :: A surjective function, but not injective. Represents the type of the entry; that is, whether it is a video, a document, podcast, &c.
++ =HasURL : URL <- Entry= :: A bijective functional relation (i.e., partial bijective function in the more common terminology); put another way, the URL is optional, but is unique among all entries. The URL of the entry, e.g. the "official" source.
++ =consumed : Bool <- Entry= :: A surjective function, but not injective. Represents whether the entry has been consumed already or not.
 
-And these are the relations of the nodes:
+** =Node=
 
 + =identifiedBy : ID <- Node= :: A bijection. This could be for example the PeerID of the IPFS node.
 + =Pinned : CID <- Node= :: Neither injective nor surjective. Relates each node with its pinned CIDs.
 
 * SQL Schema
-
 For the SQL schema take a look at the [[file:../schema.sql]].
-
-* TODO Questions
+* STRT Questions
+** STRT Pins
+Should all entries be required to be pinned on at least one node at all times?
+Maybe only the ones not yet consumed, to avoid losing them? Or maybe let the
+user deal with it.
+** STRT CID
+How to model the temporary lack of a CID? Have a =Waitlist= table or something
+similar?
 ** TODO Types
 Should types be a predefined set, or user-defined? User-defined is the ideal.
 
@@ -57,5 +62,6 @@ be used to specify several sources/related pages (e.g. YT, official website,
 Wikipedia, &c).
 
 Is it worth it? How much more complex would the model become?
-** TODO CID
-How to model the temporary lack of a CID? Have an =EntriesToDownload= table?
+** TODO Node names
+IPFS PeerIDs are not easy to use for a human. Is it worth it to add a
+user-defined name for each name?
