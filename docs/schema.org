@@ -42,7 +42,16 @@ corresponds to the various nodes running and participating in the network.
 + =Pinned : CID <- Node= :: Neither injective nor surjective. Relates each node with its pinned CIDs.
 
 * SQL Schema
-For the SQL schema take a look at the [[file:../schema.sql]].
+For the SQL schema take a look at the [[file:../sql/schema.sql]].
+* DONE Database Operations
+See [[file:../sql/operations.sql]].
+** DONE Add a node
+** DONE Remove a node
+** DONE Add an entry
+** DONE Remove an entry
+** DONE Mark an entry as consumed/not consumed
+** DONE Pin/Unpin an entry to some node(s)
+** DONE Change an entry's name
 * STRT Questions
 ** STRT Pins
 Should all entries be required to be pinned on at least one node at all times?
@@ -51,7 +60,7 @@ user deal with it.
 ** STRT CID
 How to model the temporary lack of a CID? Have a =Waitlist= table or something
 similar?
-** TODO Types
+** STRT Types
 Should types be a predefined set, or user-defined? User-defined is the ideal.
 
 Should they be manually created, or programmatically created? Programmatically
