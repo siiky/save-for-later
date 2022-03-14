@@ -53,10 +53,20 @@ See [[file:../sql/operations.sql]].
 ** DONE Pin/Unpin an entry to some node(s)
 ** DONE Change an entry's name
 * STRT Questions
-** STRT Pins
+** DONE Pins
 Should all entries be required to be pinned on at least one node at all times?
 Maybe only the ones not yet consumed, to avoid losing them? Or maybe let the
 user deal with it.
+
+-----
+
+There are two cases: either the entry has been consumed already, or it hasn't.
+
+If the entry has already been consumed, I don't see a reason for it be
+unconditionally pinned.
+
+If the entry still hasn't been consumed, then it should be pinned on some node,
+to make sure we don't lose it.
 ** STRT CID
 How to model the temporary lack of a CID? Have a =Waitlist= table or something
 similar?

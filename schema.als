@@ -45,15 +45,16 @@ pred NodeMultiplicities {
     rel/bijection[identifiedBy, Node, ID]
 }
 
+pred UnconsumedEntriesArePinned {
+    //all e:Entry | e.consumed = False => e.hasCID in Node.Pinned
+    False.~consumed.hasCID in Node.Pinned
+}
+
 fact {
     NoFreeAttributes
     EntryMultiplicities
     NodeMultiplicities
-    /*
-     * TODO: Should entries be required to be pinned on at least one node at
-     * all times?
-     */
-    //CID in Node.Pinned
+    UnconsumedEntriesArePinned
 }
 
 run {
