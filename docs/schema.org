@@ -43,7 +43,7 @@ corresponds to the various nodes running and participating in the network.
 
 * SQL Schema
 For the SQL schema take a look at the [[file:../sql/schema.sql]].
-* DONE Database Operations
+* Database Operations
 See [[file:../sql/operations.sql]].
 ** DONE Add a node
 ** DONE Remove a node
@@ -52,7 +52,31 @@ See [[file:../sql/operations.sql]].
 ** DONE Mark an entry as consumed/not consumed
 ** DONE Pin/Unpin an entry to some node(s)
 ** DONE Change an entry's name
-* STRT Questions
+** DONE Add a type
+** DONE Remove a type
+* Questions
+** STRT CID
+How to model the temporary lack of a CID? Have a =Waitlist= table or something
+similar?
+** TODO URL
+Does it make sense for a single entry to have more than one URL? It could maybe
+be used to specify several sources/related pages (e.g. YT, official website,
+Wikipedia, &c).
+
+Is it worth it? How much more complex would the model become?
+** TODO Node names
+IPFS PeerIDs are not easy to use for a human. Is it worth it to add a
+user-defined name for each name?
+** DONE Types
+Should types be a predefined set, or user-defined? User-defined is the ideal.
+
+Should they be manually created, or programmatically created? Programmatically
+created is the ideal.
+
+-----
+
+Types are stored in a table of their own, and the user may create and remove
+types at will.
 ** DONE Pins
 Should all entries be required to be pinned on at least one node at all times?
 Maybe only the ones not yet consumed, to avoid losing them? Or maybe let the
@@ -67,20 +91,3 @@ unconditionally pinned.
 
 If the entry still hasn't been consumed, then it should be pinned on some node,
 to make sure we don't lose it.
-** STRT CID
-How to model the temporary lack of a CID? Have a =Waitlist= table or something
-similar?
-** STRT Types
-Should types be a predefined set, or user-defined? User-defined is the ideal.
-
-Should they be manually created, or programmatically created? Programmatically
-created is the ideal.
-** TODO URL
-Does it make sense for a single entry to have more than one URL? It could maybe
-be used to specify several sources/related pages (e.g. YT, official website,
-Wikipedia, &c).
-
-Is it worth it? How much more complex would the model become?
-** TODO Node names
-IPFS PeerIDs are not easy to use for a human. Is it worth it to add a
-user-defined name for each name?

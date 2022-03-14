@@ -10,6 +10,8 @@ INSERT INTO nodes (id) VALUES
  *
  * NOTE: This should be a transaction. The query is different whether it's for
  *       plain SQLite or rqlite.
+ *
+ * Make sure there are no unconsumed entries pinned to this node only.
  */
 DELETE FROM pins WHERE node = :node;
 DELETE FROM nodes WHERE id = :node;
@@ -44,7 +46,7 @@ INSERT INTO pins (node, cid) VALUES
 ;
 
 /*
- * Unpin an entry to some node(s)
+ * Unpin an entry from some node(s)
  */
 DELETE FROM pins
 WHERE node = :node AND cid = :cid;
@@ -55,3 +57,18 @@ WHERE node = :node AND cid = :cid;
 UPDATE entries
 SET name = :name
 WHERE cid = :cid;
+
+/*
+ * Add a type
+ */
+INSERT INTO types (name) VALUES
+(:name)
+;
+
+/*
+ * Remove a type
+ *
+ * Make sure there are no entries of this type
+ */
+DELETE FROM types
+WHERE name = :name;

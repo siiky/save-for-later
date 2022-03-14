@@ -3,7 +3,7 @@ CREATE TABLE entries (
     name TEXT NOT NULL,
     consumed BOOLEAN NOT NULL DEFAULT FALSE,
     url TEXT UNIQUE,
-    type TINYINT NOT NULL
+    type VARCHAR(10) NOT NULL REFERENCES types (name)
 );
 
 CREATE TABLE nodes (
@@ -13,4 +13,8 @@ CREATE TABLE nodes (
 CREATE TABLE pins (
     node TEXT NOT NULL REFERENCES nodes (id),
     cid TEXT NOT NULL
+);
+
+CREATE TABLE types (
+    name VARCHAR(10) PRIMARY KEY NOT NULL UNIQUE
 );
