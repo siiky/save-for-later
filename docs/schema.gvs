@@ -11,12 +11,16 @@
 
   (settings (node (shape "oval")))
   (nodes
-    ID
-    CID
-    Type
-    Name
     Bool
+    CID
+    EntryName
+    ID
+    NodeName
+    Type
     URL)
+
+  (node EntryName (label Name))
+  (node NodeName (label Name))
 
   ;;;
   ;;; Basic functionality
@@ -25,15 +29,16 @@
   (subgraph
     entry_sg
     (-> Entry CID (label hasCID))
-    (-> Entry Name (label isNamed))
+    (-> Entry EntryName (label isNamed))
     (-> Entry Type (label ofType))
     (-> Entry URL (label HasURL))
     (-> Entry Bool (label consumed)))
 
   (subgraph
     node_sg
+    (-> "Node" ID (label identifiedBy))
     (-> "Node" CID (label Pinned))
-    (-> "Node" ID (label identifiedBy)))
+    (-> "Node" NodeName (label isNamed)))
 
   ;;;
   ;;; Experimental
@@ -42,6 +47,6 @@
   (subgraph
     waitlist_sg
     (-> Waitlist URL (label hasURL))
-    (-> Waitlist Name (label isNamed))
+    (-> Waitlist EntryName (label isNamed))
     (-> Waitlist Type (label ofType)))
   )
