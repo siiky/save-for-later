@@ -19,7 +19,7 @@ The following graph describes the connections between the entities and their
 attributes/relations. From it, one should be able to start guessing how to query
 the database.
 
-[[file:schema.png][Database Schema Graph]]
+[[file:schema.png]]
 
 It doesn't encode multiplicity constraints. Those will be defined afterwards.
 
