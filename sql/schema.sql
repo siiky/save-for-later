@@ -12,7 +12,7 @@ CREATE TABLE nodes (
 
 CREATE TABLE pins (
     node TEXT NOT NULL REFERENCES nodes (id),
-    cid TEXT NOT NULL
+    cid TEXT NOT NULL REFERENCES entries (cid)
 );
 
 CREATE TABLE types (
