@@ -3,7 +3,8 @@ open util/relation as rel
 enum Bool { False, True }
 sig ID {}
 sig CID {}
-sig Name {}
+sig EntryName {}
+sig NodeName {}
 sig URL {}
 sig Type {}
 
@@ -11,7 +12,7 @@ sig Entry {
     /* These are functions */
     hasCID : one CID,
     ofType : one Type,
-    isNamed : one Name,
+    isNamedEntry : one EntryName,
     consumed : one Bool,
 
     /* This one is functional (i.e., partial function) */
@@ -20,6 +21,7 @@ sig Entry {
 
 some sig Node {
     identifiedBy : one ID,
+    isNamedNode : lone NodeName,
     Pinned : set CID
 }
 
@@ -28,21 +30,23 @@ pred NoFreeAttributes {
     CID = Entry.hasCID
     URL = Entry.HasURL
     Type = Entry.ofType
-    Name = Entry.isNamed
+    EntryName = Entry.isNamedEntry
 
     ID = Node.identifiedBy
+    NodeName = Node.isNamedNode
 }
 
-pred EntryMultiplicities {
+pred Multiplicities {
+    /* Entry multiplicities */
     rel/bijection[hasCID, Entry, CID]
-    rel/surjective[isNamed, Name]
+    rel/surjective[isNamedEntry, EntryName]
     rel/surjective[ofType, Type]
     rel/bijective[HasURL, URL]
     rel/surjective[consumed, Bool]
-}
 
-pred NodeMultiplicities {
+    /* Node multiplicities */
     rel/bijection[identifiedBy, Node, ID]
+    rel/bijective[isNamedNode, NodeName]
 }
 
 pred UnconsumedEntriesArePinned {
@@ -52,8 +56,7 @@ pred UnconsumedEntriesArePinned {
 
 fact {
     NoFreeAttributes
-    EntryMultiplicities
-    NodeMultiplicities
+    Multiplicities
     UnconsumedEntriesArePinned
 }
 

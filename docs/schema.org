@@ -64,9 +64,11 @@ be used to specify several sources/related pages (e.g. YT, official website,
 Wikipedia, &c).
 
 Is it worth it? How much more complex would the model become?
-** TODO Node names
+** DONE Node names
 IPFS PeerIDs are not easy to use for a human. Is it worth it to add a
 user-defined name for each name?
+-----
+Nodes have an optional name.
 ** DONE Types
 Should types be a predefined set, or user-defined? User-defined is the ideal.
 
