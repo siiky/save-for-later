@@ -39,6 +39,7 @@ corresponds to the various nodes running and participating in the network.
 ** =Node=
 
 + =identifiedBy : ID <- Node= :: A bijection. This could be for example the PeerID of the IPFS node.
++ =isNamed : Name <- Node= :: A bijective functional relation. The name of the node.
 + =Pinned : CID <- Node= :: Neither injective nor surjective. Relates each node with its pinned CIDs.
 
 * SQL Schema
