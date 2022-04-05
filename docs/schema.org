@@ -1,0 +1,96 @@
+#+TITLE: Database Schema
+#+AUTHOR: siiky
+#+LANGUAGE: en
+
+This document describes the used database schema in detail.
+
+* Terminology/Notation
+
+The schema is described in a relational calculus (though not in the sense of
+"relational database"). "Entities", or "types", are written in PascalCase
+(=Entry=, =Node=); functions are written in camelCase (~hasCID~, ~consumed~),
+and always represent total functions (partial functions in this document will be
+considered relations that are not functions); and relations that are not
+functions are written in PascalCase as well (~Pinned~).
+
+* Overview
+
+The following graph describes the connections between the entities and their
+attributes/relations. From it, one should be able to start guessing how to query
+the database.
+
+[[file:schema.png]]
+
+It doesn't encode multiplicity constraints. Those will be defined afterwards.
+
+=Entry= corresponds to the videos/documents/etc catalogued in the DB. =Node=
+corresponds to the various nodes running and participating in the network.
+
+* Multiplicities
+
+** =Entry=
+
++ =hasCID : CID <- Entry= :: A bijection. The CID of the entry on IPFS.
++ =isNamed : Name <- Entry= :: A surjective function, but not injective. Represents the name of the entry. This could be the title of the video, book, podcast episode, &c.
++ =ofType : Type <- Entry= :: A surjective function, but not injective. Represents the type of the entry; that is, whether it is a video, a document, podcast, &c.
++ =HasURL : URL <- Entry= :: A bijective functional relation (i.e., partial bijective function in the more common terminology); put another way, the URL is optional, but is unique among all entries. The URL of the entry, e.g. the "official" source.
++ =consumed : Bool <- Entry= :: A surjective function, but not injective. Represents whether the entry has been consumed already or not.
+
+** =Node=
+
++ =identifiedBy : ID <- Node= :: A bijection. This could be for example the PeerID of the IPFS node.
++ =isNamed : Name <- Node= :: A bijective functional relation. The name of the node.
++ =Pinned : CID <- Node= :: Neither injective nor surjective. Relates each node with its pinned CIDs.
+
+* SQL Schema
+For the SQL schema take a look at the [[file:../sql/schema.sql]].
+* Database Operations
+See [[file:../sql/operations.sql]].
+** DONE Add a node
+** DONE Remove a node
+** DONE Add an entry
+** DONE Remove an entry
+** DONE Mark an entry as consumed/not consumed
+** DONE Pin/Unpin an entry to some node(s)
+** DONE Change an entry's name
+** DONE Add a type
+** DONE Remove a type
+* Questions
+** STRT CID
+How to model the temporary lack of a CID? Have a =Waitlist= table or something
+similar?
+** TODO URL
+Does it make sense for a single entry to have more than one URL? It could maybe
+be used to specify several sources/related pages (e.g. YT, official website,
+Wikipedia, &c).
+
+Is it worth it? How much more complex would the model become?
+** DONE Node names
+IPFS PeerIDs are not easy to use for a human. Is it worth it to add a
+user-defined name for each name?
+-----
+Nodes have an optional name.
+** DONE Types
+Should types be a predefined set, or user-defined? User-defined is the ideal.
+
+Should they be manually created, or programmatically created? Programmatically
+created is the ideal.
+
+-----
+
+Types are stored in a table of their own, and the user may create and remove
+types at will.
+** DONE Pins
+Should all entries be required to be pinned on at least one node at all times?
+Maybe only the ones not yet consumed, to avoid losing them? Or maybe let the
+user deal with it.
+
+-----
+
+There are two cases: either the entry has been consumed already, or it hasn't.
+
+If the entry has already been consumed, I don't see a reason for it be
+unconditionally pinned.
+
+If the entry still hasn't been consumed, then it should be pinned on some node,
+to make sure we don't lose it.
