@@ -1,0 +1,1 @@
+CREATE TABLE sometbl (col TINYINT NOT NULL);

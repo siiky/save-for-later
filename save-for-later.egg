@@ -1,0 +1,41 @@
+; vim: ft=scheme
+((author "siiky")
+ (license "unlicense")
+ (synopsis "")
+ (version "0.0.0")
+ (category net)
+ (dependencies
+   sql-de-lite
+   srfi-1
+   srfi-197)
+ (test-dependencies
+   cluckcheck
+   srfi-1
+   test)
+ (component-options
+   ;(csc-options "-O0" "-d3")
+   ;(linkage static)
+   )
+ (components
+   (extension sfl.db.sqlite
+              (types-file)
+              (modules sfl.db.sqlite)
+              (source db.sqlite.scm)
+              (csc-options "-X" "sql-reader-syntax/sql-reader-syntax.scm")
+              (source-dependencies
+                "sql/entry.add.sql"
+                "sql/entry.change-name.sql"
+                "sql/entry.remove.sql"
+                "sql/entry.set-consumed.sql"
+                "sql/node.add.sql"
+                "sql/node.list.sql"
+                "sql/node.remove-pins.sql"
+                "sql/node.remove.sql"
+                "sql/node.unpin-entry.sql"
+                "sql/pin.add.sql"
+                "sql/pin.remove.sql"
+                "sql/schema.sql"
+                "sql/type.add.sql"
+                "sql/type.remove.sql"
+                ))
+              ))

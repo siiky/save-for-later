@@ -10,3 +10,11 @@
 *.sqlite3
 
 *.gv
+
+*.so
+*.o
+*.link
+*.import.scm
+*.types
+*.build.sh
+*.install.sh
