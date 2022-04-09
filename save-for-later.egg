@@ -23,6 +23,7 @@
               (source db.sqlite.scm)
               (csc-options "-X" "sql-reader-syntax/sql-reader-syntax.scm")
               (source-dependencies
+                "sql-reader-syntax/sql-reader-syntax.scm"
                 "sql/entry.add.sql"
                 "sql/entry.change-name.sql"
                 "sql/entry.remove.sql"
@@ -38,4 +39,4 @@
                 "sql/type.add.sql"
                 "sql/type.remove.sql"
                 ))
-              ))
+   ))

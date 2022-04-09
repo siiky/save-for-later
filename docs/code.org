@@ -1,0 +1,17 @@
+#+TITLE: save-for-later
+#+AUTHOR: siiky
+#+LANGUAGE: en
+
+All the SQL code is in =sql/=.
+
+The SQLite adapter is implemented in =db.sqlite.scm=.
+
+The ~#!sql"path/to/file.sql"~ reader syntax is implemented in
+=sql-reader-syntax/sql-reader-syntax.scm=.
+
+DB adapters should consist of two "layers": one that mimics directly the
+DB schema operations (adding, removing, listing, etc); and another to be used
+from the outside that checks invariants and stuff.
+
+Since all DB adapters will use the same underlying DB schema, the exported
+procedures should have the same names and try to show the same behaviour.
