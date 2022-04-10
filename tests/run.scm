@@ -79,6 +79,9 @@
           (dbtest
             db
             (test "Adding succeeds" '() ((type/add db) name))
+            (test-assert "Added type is listed" (elem? `(,name) ((type/list db))))
+            (test "Removing succeeds" '() ((type/remove db) name))
+            (test-assert "Removed type is not listed" (!elem? `(,name) ((type/list db))))
             )))))
   )
 
