@@ -11,6 +11,8 @@
     (chain =>)
     (chain-lambda ->)))
 
+(define (!elem? x lst) (not (member x lst equal?)))
+(define (elem? x lst) (not (!elem? x lst)))
 
 (define-syntax do-times
   (syntax-rules ()
@@ -64,9 +66,9 @@
           (dbtest
             db
             (test "Adding succeeds" '() ((node/add db) id name))
-            (test-assert "Added node is listed" (lset= equal? `((,id ,name)) ((node/list db))))
-            (test "Removing works" '() ((node/remove db) id))
-            (test-assert "Removed node is not listed" (not (member `(,id ,name) ((node/list db)))))
+            (test-assert "Added node is listed" (elem? `(,id ,name) ((node/list db))))
+            (test "Removing succeeds" '() ((node/remove db) id))
+            (test-assert "Removed node is not listed" (!elem? `(,id ,name) ((node/list db))))
             )))))
 
   (test-group "type operations"
