@@ -61,7 +61,7 @@
   (defsql (node/unpin-entry node cid) #!sql"sql/node.unpin-entry.sql" fetch #:node node #:cid cid)
 
   (defsql (type/add name) #!sql"sql/type.add.sql" fetch #:name name)
-  (defsql (type/remove name) #!sql"sql/type.remove.sql" fetch #:name name)
+  (defsql (type/list) #!sql"sql/type.list.sql")
   (defsql (type/remove name) #!sql"sql/type.remove.sql" fetch #:name name)
 
   (defsql (entry/add cid name url type) #!sql"sql/entry.add.sql" fetch #:cid cid #:name name #:url url #:type type)
