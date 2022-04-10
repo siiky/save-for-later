@@ -52,7 +52,8 @@
 
 (test-group "sfl.db.sqlite"
   (import sfl.db.sqlite)
-  (test "Schema doesn't error in clean DB" '() (dbtest db))
+  (test-group "running the schema"
+    (test "Running the schema in clean DB succeeds" '() (dbtest db)))
 
   (test-group "node operations"
     (do-times
