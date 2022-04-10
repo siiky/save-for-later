@@ -35,7 +35,11 @@
                 "sql/node.unpin-entry.sql"
                 "sql/pin.add.sql"
                 "sql/pin.remove.sql"
+                "sql/schema.entries.sql"
+                "sql/schema.nodes.sql"
+                "sql/schema.pins.sql"
                 "sql/schema.sql"
+                "sql/schema.types.sql"
                 "sql/type.add.sql"
                 "sql/type.remove.sql"
                 ))

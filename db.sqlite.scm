@@ -4,6 +4,8 @@
    close
    open
    with-database
+
+   run-schema
    )
 
   (import
@@ -13,6 +15,7 @@
     )
 
   (import
+    srfi-1
     (rename
       (only srfi-197
             chain
@@ -46,7 +49,10 @@
 
   ;; Base DB operations
 
-  (defsql (run-schema) #!sql"sql/schema.sql")
+  (defsql (schema/nodes) #!sql"sql/schema.nodes.sql")
+  (defsql (schema/types) #!sql"sql/schema.types.sql")
+  (defsql (schema/entries) #!sql"sql/schema.entries.sql")
+  (defsql (schema/pins) #!sql"sql/schema.pins.sql")
 
   (defsql (node/add id name) #!sql"sql/node.add.sql" fetch #:id id #:name name)
   (defsql (node/list) #!sql"sql/node.list.sql")
@@ -65,4 +71,12 @@
 
   (defsql (pin/add node cid) #!sql"sql/pin.add.sql" fetch #:node node #:cid cid)
   (defsql (pin/remove cid) #!sql"sql/pin.remove.sql" fetch #:cid cid)
+
+  (define (run-schema db)
+    (let ((lst (map (cute <> db)
+                    `(,schema/nodes ,schema/types ,schema/entries ,schema/pins))))
+      (lambda ()
+        (=> lst
+            (map (cute <>) _)
+            (filter (complement null?) _)))))
   )

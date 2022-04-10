@@ -1,0 +1,4 @@
+CREATE TABLE nodes (
+    id   TEXT        PRIMARY KEY NOT NULL UNIQUE,
+    name VARCHAR(20) UNIQUE
+);
