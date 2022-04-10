@@ -78,3 +78,5 @@
             (test "Adding succeeds" '() ((type/add db) name))
             )))))
   )
+
+(test-exit)
