@@ -11,6 +11,8 @@
  (test-dependencies
    cluckcheck
    srfi-1
+   srfi-41
+   srfi-197
    test)
  (component-options
    ;(csc-options "-O0" "-d3")

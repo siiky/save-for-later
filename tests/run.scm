@@ -4,6 +4,7 @@
 
 (import
   srfi-1
+  srfi-41
   (rename
     (only srfi-197
           chain
@@ -60,21 +61,26 @@
 (define (gen-alphanum) (gen-char "0123456789abcdefghijklmnopqrstuvwxyz"))
 (define (gen-Alphanum) (gen-char "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"))
 
-(define ((gen-list/len len) gen)
-  (let loop ((len len)
-             (ret '()))
-    (if (zero? len)
-        ret
-        (loop (sub1 len) (cons (gen) ret)))))
+(define-stream (gen-stream gen)
+  (stream-cons (gen) (gen-stream gen)))
 
-(define (gen-string/len gen-char len)
-  (=> (gen-list/len len)
-      (_ gen-char)
+(define-stream (stream-take strm len)
+  (if (positive? len)
+      (stream-cons (stream-car strm) (stream-take (stream-cdr strm) (sub1 len)))
+      stream-null))
+
+(define (gen-list/len len gen)
+  (=> (gen-stream gen)
+      (stream-take _ len)
+      (stream->list _)))
+
+(define (gen-string/len len gen-char)
+  (=> (gen-list/len len gen-char)
       (list->string _)))
 
-(define (gen-id) (gen-string/len gen-Alphanum 52))
-(define (gen-cid) (gen-string/len gen-alphanum 59)) ; CIDv1 bafyXXX-like
-(define (gen-name) (gen-string/len gen-Alphanum (pseudo-random-integer 11)))
+(define (gen-id) (gen-string/len 52 gen-Alphanum))
+(define (gen-cid) (gen-string/len 59 gen-alphanum)) ; bafyXXX-like CIDv1
+(define (gen-name) (gen-string/len (pseudo-random-integer 11) gen-Alphanum))
 
 
 (test-group "sfl.db.sqlite"
