@@ -26,6 +26,30 @@
     ((dbtest db expr ...)
      (with-database 'memory db ((run-schema db)) expr ...))))
 
+(define-syntax tbltest
+  (syntax-rules ()
+    ((tbltest thing                    ; The name of the thing to test
+              ((var gen-var) ...)      ; The variables to generate and their respective generating expressions
+              (col ...)                ; The expected columns from a /list operations
+              (/add add-arg ...)       ; The /add operation and the required arguments (excluding the db)
+              /list                    ; The /list operation
+              (/remove remove-arg ...) ; Same as /add
+              test-group-name)         ; The test-group name of a specific run
+
+     (test-group (string-append thing " operations")
+       (do-times
+         100
+         (let ((var gen-var) ...)
+           (let ((row `(,col ...)))
+             (test-group test-group-name
+               (dbtest
+                 db
+                 (test "Adding succeeds" '() ((/add db) add-arg ...))
+                 (test-assert (string-append "Added " thing " is listed") (elem? row ((/list db))))
+                 (test "Removing succeeds" '() ((/remove db) remove-arg ...))
+                 (test-assert (string-append "Removed " thing " is not listed") (!elem? row ((/list db))))
+                 )))))))))
+
 
 (define (gen-char charset)
   (=> charset
@@ -56,35 +80,25 @@
 (test-group "sfl.db.sqlite"
   (import sfl.db.sqlite)
 
-  (test-group "running the schema"
+  (test-group "the schema"
     (test "Running the schema in clean DB succeeds" '() (dbtest db)))
 
-  (test-group "node operations"
-    (do-times
-      100
-      (let ((id (gen-id))
+  (tbltest "node"
+           ((id (gen-id))
             (name (gen-name)))
-        (test-group (string-append name ":" id)
-          (dbtest
-            db
-            (test "Adding succeeds" '() ((node/add db) id name))
-            (test-assert "Added node is listed" (elem? `(,id ,name) ((node/list db))))
-            (test "Removing succeeds" '() ((node/remove db) id))
-            (test-assert "Removed node is not listed" (!elem? `(,id ,name) ((node/list db))))
-            )))))
+           (id name)
+           (node/add id name)
+           node/list
+           (node/remove id)
+           (string-append name ":" id))
 
-  (test-group "type operations"
-    (do-times
-      100
-      (let ((name (gen-name)))
-        (test-group name
-          (dbtest
-            db
-            (test "Adding succeeds" '() ((type/add db) name))
-            (test-assert "Added type is listed" (elem? `(,name) ((type/list db))))
-            (test "Removing succeeds" '() ((type/remove db) name))
-            (test-assert "Removed type is not listed" (!elem? `(,name) ((type/list db))))
-            )))))
+  (tbltest "type"
+           ((name (gen-name)))
+           (name)
+           (type/add name)
+           type/list
+           (type/remove name)
+           name)
   )
 
 (test-exit)
