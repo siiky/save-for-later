@@ -27,13 +27,14 @@
      (with-database 'memory db ((run-schema db)) expr ...))))
 
 
-(define gen-alphanum
-  (let ((alphanum "0123456789abcdefghijklmnopqrstuvwxyz"))
-    (lambda ()
-      (=> alphanum
-          (string-length _)
-          (pseudo-random-integer _)
-          (string-ref alphanum _)))))
+(define (gen-char charset)
+  (=> charset
+      (string-length _)
+      (pseudo-random-integer _)
+      (string-ref charset _)))
+
+(define (gen-alphanum) (gen-char "0123456789abcdefghijklmnopqrstuvwxyz"))
+(define (gen-Alphanum) (gen-char "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"))
 
 (define ((gen-list/len len) gen)
   (let loop ((len len)
@@ -42,18 +43,19 @@
         ret
         (loop (sub1 len) (cons (gen) ret)))))
 
-(define gen-string/len
-  (-> (gen-list/len _)
-      (_ gen-alphanum)
+(define (gen-string/len gen-char len)
+  (=> (gen-list/len len)
+      (_ gen-char)
       (list->string _)))
 
-(define (gen-id) (gen-string/len 52))
-(define (gen-cid) (gen-string/len 59))
-(define (gen-name) (gen-string/len (pseudo-random-integer 11)))
+(define (gen-id) (gen-string/len gen-Alphanum 52))
+(define (gen-cid) (gen-string/len gen-alphanum 59)) ; CIDv1 bafyXXX-like
+(define (gen-name) (gen-string/len gen-Alphanum (pseudo-random-integer 11)))
 
 
 (test-group "sfl.db.sqlite"
   (import sfl.db.sqlite)
+
   (test-group "running the schema"
     (test "Running the schema in clean DB succeeds" '() (dbtest db)))
 
