@@ -64,10 +64,12 @@
 
   (defsql (entry/add cid name url type) #!sql"sql/entry.add.sql" fetch #:cid cid #:name name #:url url #:type type)
   (defsql (entry/change-name cid name) #!sql"sql/entry.change-name.sql" fetch #:cid cid #:name name)
+  (defsql (entry/list) #!sql"sql/entry.list.sql")
   (defsql (entry/remove cid) #!sql"sql/entry.remove.sql" fetch #:cid cid)
   (defsql (entry/set-consumed cid consumed) #!sql"sql/entry.set-consumed.sql" fetch #:cid cid #:consumed consumed)
 
   (defsql (pin/add node cid) #!sql"sql/pin.add.sql" fetch #:node node #:cid cid)
+  (defsql (pin/list) #!sql"sql/pin.list.sql")
   (defsql (pin/remove cid) #!sql"sql/pin.remove.sql" fetch #:cid cid)
   (defsql (pin/remove-by-node node) #!sql"sql/pin.remove-by-node.sql" fetch-all #:node node)
   (defsql (pin/remove-cid-from-node cid node) #!sql"sql/pin.remove-cid-from-node.sql" fetch #:cid cid #:node node)
