@@ -27,6 +27,20 @@
     ((dbtest db expr ...)
      (with-database 'memory db ((run-schema db)) expr ...))))
 
+(define-syntax test-add
+  (syntax-rules ()
+   ((test-add row /add-op /list-op)
+    (begin
+     (test "Adding succeeds" '() /add-op)
+     (test-assert "Added row is listed" (elem? row /list-op))))))
+
+(define-syntax test-remove
+  (syntax-rules ()
+   ((test-remove row /remove-op /list-op)
+    (begin
+     (test "Removing succeeds" '() /remove-op)
+     (test-assert "Removed row is not listed" (!elem? row /list-op))))))
+
 (define-syntax tbltest
   (syntax-rules ()
     ((tbltest thing                    ; The name of the thing to test
@@ -45,13 +59,11 @@
              (test-group test-group-name
                (dbtest
                  db
-                 (test "Adding succeeds" '() ((/add db) add-arg ...))
-                 (test-assert (string-append "Added " thing " is listed") (elem? row ((/list db))))
-                 (test "Removing succeeds" '() ((/remove db) remove-arg ...))
-                 (test-assert (string-append "Removed " thing " is not listed") (!elem? row ((/list db))))
-                 )))))))))
+                 (test-add row ((/add db) add-arg ...) ((/list db)))
+                 (test-remove row ((/remove db) remove-arg ...) ((/list db)))))))))
+     )))
 
-
+(define (gen-bool) (pseudo-random-integer 2))
 (define (gen-char charset)
   (=> charset
       (string-length _)
@@ -105,6 +117,33 @@
            type/list
            (type/remove name)
            name)
+
+  (test-group "entry operations"
+    (do-times
+      100
+      (let ((cid (gen-cid))
+            (name (gen-name))
+            (new-name (gen-name))
+            (consumed (gen-bool))
+            (url (gen-string/len 40 gen-alphanum))
+            (type (gen-name)))
+        (let ((row `(,cid ,name 0 ,url ,type))
+              (row/new-name `(,cid ,new-name 0 ,url ,type))
+              (row/consumed `(,cid ,new-name ,consumed ,url ,type)))
+          (test-group (string-append cid ":" name ":" url ":" type)
+            (dbtest
+              db
+              (test-add row ((entry/add db) cid name url type) ((entry/list db)))
+
+              (test "Changing name succeeds" '() ((entry/change-name db) cid new-name))
+              (test-assert "Entry has new name" (elem? row/new-name ((entry/list db))))
+
+              (test "Setting consumed succeeds" '() ((entry/set-consumed db) cid consumed))
+              (test-assert "Entry has new consumed value" (elem? row/consumed ((entry/list db))))
+
+              (test "Removing succeeds" '() ((entry/remove db) cid))
+              (test-assert "Removed row is not listed" (!elem? cid (map car ((entry/list db)))))
+              ))))))
   )
 
 (test-exit)

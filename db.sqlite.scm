@@ -30,8 +30,8 @@
 
   (define-syntax with-database
     (syntax-rules ()
-      ((with-database path db expr ...)
-       (call-with-database path (lambda (db) expr ...)))))
+      ((with-database filename db expr ...)
+       (call-with-database filename (lambda (db) expr ...)))))
 
   (define-syntax defsql
     (syntax-rules ()
