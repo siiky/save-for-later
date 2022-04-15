@@ -70,9 +70,9 @@
 
   (defsql (pin/add node cid) #!sql"sql/pin.add.sql" fetch #:node node #:cid cid)
   (defsql (pin/list) #!sql"sql/pin.list.sql")
-  (defsql (pin/remove cid) #!sql"sql/pin.remove.sql" fetch #:cid cid)
-  (defsql (pin/remove-by-node node) #!sql"sql/pin.remove-by-node.sql" fetch-all #:node node)
-  (defsql (pin/remove-cid-from-node cid node) #!sql"sql/pin.remove-cid-from-node.sql" fetch #:cid cid #:node node)
+  (defsql (pin/remove-cid cid) #!sql"sql/pin.remove-cid.sql" fetch #:cid cid)
+  (defsql (pin/remove-cid-from-node node cid) #!sql"sql/pin.remove-cid-from-node.sql" fetch #:cid cid #:node node)
+  (defsql (pin/remove-node node) #!sql"sql/pin.remove-node.sql" fetch-all #:node node)
 
   (define (run-schema db)
     (let ((lst (map (cute <> db)

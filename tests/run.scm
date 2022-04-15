@@ -14,6 +14,7 @@
 
 (define (!elem? x lst) (not (member x lst equal?)))
 (define (elem? x lst) (not (!elem? x lst)))
+(define (!elem-by? by x lst) (!elem? x (map by lst)))
 
 (define-syntax do-times
   (syntax-rules ()
@@ -52,13 +53,13 @@
               test-group-name)         ; The test-group name of a specific run
 
      (test-group (string-append thing " operations")
-       (do-times
-         100
-         (let ((var gen-var) ...)
-           (let ((row `(,col ...)))
-             (test-group test-group-name
-               (dbtest
-                 db
+       (dbtest
+         db
+         (do-times
+           100
+           (let ((var gen-var) ...)
+             (let ((row `(,col ...)))
+               (test-group test-group-name
                  (test-add row ((/add db) add-arg ...) ((/list db)))
                  (test-remove row ((/remove db) remove-arg ...) ((/list db)))))))))
      )))
@@ -119,20 +120,20 @@
            name)
 
   (test-group "entry operations"
-    (do-times
-      100
-      (let ((cid (gen-cid))
-            (name (gen-name))
-            (new-name (gen-name))
-            (consumed (gen-bool))
-            (url (gen-string/len 40 gen-alphanum))
-            (type (gen-name)))
-        (let ((row `(,cid ,name 0 ,url ,type))
-              (row/new-name `(,cid ,new-name 0 ,url ,type))
-              (row/consumed `(,cid ,new-name ,consumed ,url ,type)))
-          (test-group (string-append cid ":" name ":" url ":" type)
-            (dbtest
-              db
+    (dbtest
+      db
+      (do-times
+        100
+        (let ((cid (gen-cid))
+              (name (gen-name))
+              (new-name (gen-name))
+              (consumed (gen-bool))
+              (url (gen-string/len 40 gen-alphanum))
+              (type (gen-name)))
+          (let ((row `(,cid ,name 0 ,url ,type))
+                (row/new-name `(,cid ,new-name 0 ,url ,type))
+                (row/consumed `(,cid ,new-name ,consumed ,url ,type)))
+            (test-group (string-append cid ":" name ":" url ":" type)
               (test-add row ((entry/add db) cid name url type) ((entry/list db)))
 
               (test "Changing name succeeds" '() ((entry/change-name db) cid new-name))
@@ -142,7 +143,26 @@
               (test-assert "Entry has new consumed value" (elem? row/consumed ((entry/list db))))
 
               (test "Removing succeeds" '() ((entry/remove db) cid))
-              (test-assert "Removed row is not listed" (!elem? cid (map car ((entry/list db)))))
+              (test-assert "Removed row is not listed" (!elem-by? car cid ((entry/list db))))
+              ))))))
+
+  (test-group "pin operations"
+    (dbtest
+      db
+      (do-times
+        100
+        (let ((node (gen-id))
+              (cid (gen-cid)))
+          (let ((row `(,node ,cid)))
+            (test-group (string-append node ":" cid)
+              (test-add row ((pin/add db) node cid) ((pin/list db)))
+              (test-remove row ((pin/remove-cid db) cid) ((pin/list db)))
+
+              (test-add row ((pin/add db) node cid) ((pin/list db)))
+              (test-remove row ((pin/remove-cid-from-node db) node cid) ((pin/list db)))
+
+              (test-add row ((pin/add db) node cid) ((pin/list db)))
+              (test-remove row ((pin/remove-node db) node) ((pin/list db)))
               ))))))
   )
 
