@@ -1,1 +1,1 @@
-SELECT node, cid FROM pins;
+SELECT DISTINCT node, cid FROM pins;

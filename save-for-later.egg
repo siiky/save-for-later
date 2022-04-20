@@ -5,6 +5,7 @@
  (version "0.0.0")
  (category net)
  (dependencies
+   ipfs
    sql-de-lite
    srfi-1
    srfi-197)
@@ -22,7 +23,6 @@
    (extension sfl.db.sqlite
               (types-file)
               (modules sfl.db.sqlite)
-              (source db.sqlite.scm)
               (csc-options "-X" "sql-reader-syntax/sql-reader-syntax.scm")
               (source-dependencies
                 "sql-reader-syntax/sql-reader-syntax.scm"
@@ -35,7 +35,10 @@
                 "sql/node.list.sql"
                 "sql/node.remove.sql"
                 "sql/pin.add.sql"
+                "sql/pin.list-cids.sql"
+                "sql/pin.list-node.sql"
                 "sql/pin.list.sql"
+                "sql/pin.pinned-to-node.sql"
                 "sql/pin.remove-cid-from-node.sql"
                 "sql/pin.remove-cid.sql"
                 "sql/pin.remove-node.sql"
@@ -47,4 +50,9 @@
                 "sql/type.add.sql"
                 "sql/type.remove.sql"
                 ))
+
+   (extension sfl
+              (types-file)
+              (modules sfl)
+              (source sfl.scm))
    ))

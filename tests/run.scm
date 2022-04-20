@@ -151,18 +151,24 @@
       db
       (do-times
         100
-        (let ((node (gen-id))
+        (let ((id (gen-id))
               (cid (gen-cid)))
-          (let ((row `(,node ,cid)))
-            (test-group (string-append node ":" cid)
-              (test-add row ((pin/add db) node cid) ((pin/list db)))
+          (let ((row `(,id ,cid)))
+            (test-group (string-append id ":" cid)
+              (test-add row ((pin/add db) id cid) ((pin/list db)))
+              (test-assert "Added CID is listed" (elem? cid ((pin/list-cids db))))
+              (test-assert "Added Node is listed" (elem? cid ((pin/list-node db) id)))
               (test-remove row ((pin/remove-cid db) cid) ((pin/list db)))
 
-              (test-add row ((pin/add db) node cid) ((pin/list db)))
-              (test-remove row ((pin/remove-cid-from-node db) node cid) ((pin/list db)))
+              (test-add row ((pin/add db) id cid) ((pin/list db)))
+              (test-assert "Added CID is listed" (elem? cid ((pin/list-cids db))))
+              (test-assert "Added Node is listed" (elem? cid ((pin/list-node db) id)))
+              (test-remove row ((pin/remove-cid-from-node db) cid id) ((pin/list db)))
 
-              (test-add row ((pin/add db) node cid) ((pin/list db)))
-              (test-remove row ((pin/remove-node db) node) ((pin/list db)))
+              (test-add row ((pin/add db) id cid) ((pin/list db)))
+              (test-assert "Added CID is listed" (elem? cid ((pin/list-cids db))))
+              (test-assert "Added Node is listed" (elem? cid ((pin/list-node db) id)))
+              (test-remove row ((pin/remove-node db) id) ((pin/list db)))
               ))))))
   )
 

@@ -6,6 +6,17 @@
    with-database
 
    run-schema
+
+   add-entry
+   add-type
+   list-pinned-cids
+   not-pinned-to-node?
+   pin-to-node
+   pinned-to-node?
+   prepare-database
+   unpin-from-node
+
+   with-transaction
    )
 
   (import
@@ -70,8 +81,11 @@
 
   (defsql (pin/add node cid) #!sql"sql/pin.add.sql" fetch #:node node #:cid cid)
   (defsql (pin/list) #!sql"sql/pin.list.sql")
+  (defsql (pin/list-cids) #!sql"sql/pin.list-cids.sql" fetch-column)
+  (defsql (pin/list-node node) #!sql"sql/pin.list-node.sql" fetch-column #:node node)
+  (defsql (pin/pinned-to-node cid node) #!sql"sql/pin.pinned-to-node.sql" fetch-all #:node node #:cid cid)
   (defsql (pin/remove-cid cid) #!sql"sql/pin.remove-cid.sql" fetch #:cid cid)
-  (defsql (pin/remove-cid-from-node node cid) #!sql"sql/pin.remove-cid-from-node.sql" fetch #:cid cid #:node node)
+  (defsql (pin/remove-cid-from-node cid node) #!sql"sql/pin.remove-cid-from-node.sql" fetch #:cid cid #:node node)
   (defsql (pin/remove-node node) #!sql"sql/pin.remove-node.sql" fetch-all #:node node)
 
   (define (run-schema db)
@@ -80,5 +94,31 @@
       (lambda ()
         (=> lst
             (map (cute <>) _)
-            (filter (complement null?) _)))))
+            (filter (o not null?) _)))))
+
+  ;; High-level API
+
+  (define (prepare-database db)
+    (when (null? (schema db))
+      ((run-schema db))))
+
+  (define ((not-pinned-to-node? db) cid node)
+    (null? ((pin/pinned-to-node db) cid node)))
+
+  (define ((pinned-to-node? db) cid node)
+    (not ((not-pinned-to-node? db) cid node)))
+
+  (define ((pin-to-node db) cid node)
+    (when ((not-pinned-to-node? db) cid node)
+      ((pin/add db) node cid)))
+
+  (define ((list-pinned-cids db) node-id)
+    (if node-id
+        ((pin/list-node db) node-id)
+        ((pin/list-cids db))))
+
+  (define unpin-from-node pin/remove-cid-from-node)
+
+  (define add-type type/add)
+  (define add-entry entry/add)
   )

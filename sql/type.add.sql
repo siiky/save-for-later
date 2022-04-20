@@ -1,2 +1,2 @@
-INSERT INTO types (name) VALUES
+INSERT OR IGNORE INTO types (name) VALUES
 (:name);
