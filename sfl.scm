@@ -5,6 +5,7 @@
    add-type
    current-node
    list-pinned-cids
+   list-types
    pin-entry
    prepare-database
    remove
@@ -23,8 +24,13 @@
 
   (define prepare-database db:prepare-database)
 
-  (define (add-entry db cid name url type)
-    ((db:add-entry db) cid name url type))
+  (define (add-entry db cid name url type #!key (pin #t) node)
+    (let ((node (current-node node)))
+      (db:with-transaction
+        db
+        (lambda ()
+          (when pin (pin-entry db cid node))
+          ((db:add-entry db) cid name url type)))))
 
   (define (pin-entry db cid #!optional node)
     ((db:pin-to-node db) cid (current-node node)))
@@ -45,19 +51,14 @@
                  'Hash
                  (ipfs:add
                    #:reader ipfs:reader/json
+                   ; TODO: Accept files as well as directories.
                    #:writer (ipfs:writer/filesystem path)
                    #:pin pin
                    #:raw-leaves raw-leaves
                    #:trickle trickle
                    #:cid-version cid-version
                    ))))
-      (db:with-transaction
-        db
-        (lambda ()
-          (when pin (pin-entry db cid node))
-          (add-entry db cid name url type)
-          #t
-          ))))
+      (add-entry db cid name url type #:node node #:pin pin)))
 
   (define (list-pinned-cids db #!key node all-nodes?)
     ((db:list-pinned-cids db)
@@ -71,4 +72,6 @@
 
   (define (add-type db type)
     ((db:add-type db) type))
+
+  (define list-types db:list-types)
   )

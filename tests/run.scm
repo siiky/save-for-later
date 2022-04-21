@@ -59,10 +59,11 @@
            100
            (let ((var gen-var) ...)
              (let ((row `(,col ...)))
-               (test-group test-group-name
-                 (test-add row ((/add db) add-arg ...) ((/list db)))
-                 (test-remove row ((/remove db) remove-arg ...) ((/list db)))))))))
-     )))
+               (let ((row (if (null? (cdr row)) (car row) row)))
+                 (test-group test-group-name
+                   (test-add row ((/add db) add-arg ...) ((/list db)))
+                   (test-remove row ((/remove db) remove-arg ...) ((/list db))))))))))
+       )))
 
 (define (gen-bool) (pseudo-random-integer 2))
 (define (gen-char charset)

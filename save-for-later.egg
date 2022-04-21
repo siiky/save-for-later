@@ -20,6 +20,10 @@
    ;(linkage static)
    )
  (components
+   #;(program sfl-exe
+            (source sfl.scm)
+            (component-dependencies sfl-lib sfl.db.sqlite))
+
    (extension sfl.db.sqlite
               (types-file)
               (modules sfl.db.sqlite)

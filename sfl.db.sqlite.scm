@@ -10,6 +10,7 @@
    add-entry
    add-type
    list-pinned-cids
+   list-types
    not-pinned-to-node?
    pin-to-node
    pinned-to-node?
@@ -70,7 +71,7 @@
   (defsql (node/remove id) #!sql"sql/node.remove.sql" fetch #:id id)
 
   (defsql (type/add name) #!sql"sql/type.add.sql" fetch #:name name)
-  (defsql (type/list) #!sql"sql/type.list.sql")
+  (defsql (type/list) #!sql"sql/type.list.sql" fetch-column)
   (defsql (type/remove name) #!sql"sql/type.remove.sql" fetch #:name name)
 
   (defsql (entry/add cid name url type) #!sql"sql/entry.add.sql" fetch #:cid cid #:name name #:url url #:type type)
@@ -83,7 +84,7 @@
   (defsql (pin/list) #!sql"sql/pin.list.sql")
   (defsql (pin/list-cids) #!sql"sql/pin.list-cids.sql" fetch-column)
   (defsql (pin/list-node node) #!sql"sql/pin.list-node.sql" fetch-column #:node node)
-  (defsql (pin/pinned-to-node cid node) #!sql"sql/pin.pinned-to-node.sql" fetch-all #:node node #:cid cid)
+  (defsql (pin/pinned-to-node? cid node) #!sql"sql/pin.pinned-to-node.sql" fetch-column #:node node #:cid cid)
   (defsql (pin/remove-cid cid) #!sql"sql/pin.remove-cid.sql" fetch #:cid cid)
   (defsql (pin/remove-cid-from-node cid node) #!sql"sql/pin.remove-cid-from-node.sql" fetch #:cid cid #:node node)
   (defsql (pin/remove-node node) #!sql"sql/pin.remove-node.sql" fetch-all #:node node)
@@ -103,7 +104,7 @@
       ((run-schema db))))
 
   (define ((not-pinned-to-node? db) cid node)
-    (null? ((pin/pinned-to-node db) cid node)))
+    (null? ((pin/pinned-to-node? db) cid node)))
 
   (define ((pinned-to-node? db) cid node)
     (not ((not-pinned-to-node? db) cid node)))
@@ -119,6 +120,7 @@
 
   (define unpin-from-node pin/remove-cid-from-node)
 
-  (define add-type type/add)
   (define add-entry entry/add)
+  (define add-type type/add)
+  (define (list-types db) ((type/list db)))
   )

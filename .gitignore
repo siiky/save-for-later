@@ -18,3 +18,5 @@
 *.types
 *.build.sh
 *.install.sh
+
+sfl

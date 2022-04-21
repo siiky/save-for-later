@@ -9,4 +9,7 @@ install: all
 test: install
 	chicken-install -n -test
 
+clean:
+	chicken-clean
+
 .PHONY: all install sfl test
